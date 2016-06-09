@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>canvasDraw-step</title>
+    <style>
+      #screen{
+        background: black;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+      <canvas id="screen" width="300" height="300"></canvas>
+
+      <script>
+        /**
+          canvas drawimage테스트
+        */
+
+
+        // setTransform을 이용한 위치 조정 후
+        // draw 처리 시 위치관계 테스트
+        // transform을 이용해 미리 위치를 조정한 만큼 보정이 되어 그려짐.
+        var screen    = document.getElementById("screen");
+        var ctx       = screen.getContext("2d");
+        ctx.setTransform( 1, 0, 0, 1, -20, -21); // 미리 x, y 위치를 -값으로 조절해 둠
+        ctx.beginPath();
+        ctx.fillStyle="#ffcc00";
+        ctx.rect( 20, 20, 30, 30 );             // 20, 20 위치에 그리면 setTransform의 영향에 의해 결과적으로 0, -1의 위치에 그려짐
+        ctx.fill();
+        ctx.closePath();
+
+
+      </script>
+  </body>
+</html>
