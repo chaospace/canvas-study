@@ -19,20 +19,23 @@
  }
  context.fill();
  ```
-간단하게 이용하기는 좋지만 체크해야 되는
+간단하게 이용하기는 좋지만 체크해야 되는  
 아이템이 많아지면 더미패스를 그리기 위한 부하가 좀 아쉬움.
 
  **3. context의 getImageData를 이용하는 법**
-  getImageData를 통해 가져온 픽셀정보에서
+
+  getImageData를 통해 가져온 픽셀정보에서  
   해당좌표의 픽셀 alpha값이 0이 아니면 히트라고 간주
+
   ```{.javascript}
   imageData = ctx.getImageData( x, y, 1, 1 );
   results = (imageData.data[3] > 0) ? true : false;
   ```
 
 ## Canvas를 사용하며 느낀점
-다양한 드로잉 오브젝트를 다루기 위해서는 객체 관리가 필수.
+다양한 드로잉 오브젝트를 다루기 위해서는 객체 관리가 필수.  
 객체에서는 내부 canvas를 가지고 original정보를 가지고 있는게 퍼포먼스에 좋음.
+
 ```{.javascript}
 // 위치 변경전의 오리지널 draw
 protected _drawOriginItem():void{
