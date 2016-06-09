@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>canvas-drag-test</title>
+    <style>
+      #screen{
+        background: black;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="screen" width="400" height="400" />
+    <script>
+
+      /**
+         drag & drop 구현
+         step_3
+          rect가 여러 개일 경우의 처리 구현
+          mousemove감지를 canvas영역에서 하면 도큐먼트에서 move시에 반응이 끊기는 점은 체크 사항.
+            - 퍼포먼스를 무시하면 document에 move를 걸어도 문제 없을 듯.
+
+         step_2
+          canvas 내부의 graphic요소 마우스 반응 처리
+            - 구현 순서
+              1. 기본fillStyle 정의
+              2. isPress 체크 처리
+              3. context에 객체 그리기
+              4. canvas의 isPointInPath를 이용 hitTest감지
+              5. isPointInPath가 true이면 fillStyle변경
+              6. fill처리
+
+         step_1
+          canvas translate를 이용한 드래그 구현 무리 없이 잘 구현됨.
+            - 그려진 객체 정보를 기억하여 다시 그려주는게 포인트.
+      */
+
+      function getRects(){
+          var arr=[];
+          for( i=0; i<5; i++){
+              arr.push({
+                x: Math.random()*400,
+                y: Math.random()*400,
+                w:30,
+                h:30
+              });
+          }
+          return arr;
+      }
+
+      function drawRects(){
+          var r;
+          for( i=0; i<rects.length; i++){
+            r = rects[i];
+            context.save();
+            context.beginPath();
+            context.rect( r.x , r.y, r.w, r.h );
+            context.fillStyle = "rgba(255, 255, 100, 1)";
+            context.fill();
+            context.restore();
+          }
+      }
+
+      var screen  = document.getElementById("screen");
+      var context = screen.getContext("2d");
+      var isPress = false;
+      var basePoint = {x:0,y:0};
+
+      screen.addEventListener("mousedown", onMouseDown );
+      document.addEventListener("mousemove", onMouseMove );
+      document.addEventListener("mouseup", onMouseUp );
+
+      var rects   = getRects();
+      drawRects();
+
+      function onMouseDown( e ){
+        isPress = true;
+        updateBasePoint(e);
+      }
+
+      function updateBasePoint( e ){
+        basePoint.x = e.screenX;
+        basePoint.y = e.screenY;
+      }
+
+      function hitTestItem( e ){
+        var r;
+        var area = screen.getBoundingClientRect();
+        var x = e.clientX - area.left;
+        var y = e.clientY - area.top;
+        for( i=0; i<rects.length; i++){
+          r = rects[i];
+          context.save();
+          context.beginPath();
+          context.rect( r.x , r.y, r.w, r.h );
+
+          if(context.isPointInPath( x, y )){
+            context.fillStyle = "red";
+          } else {
+            context.fillStyle = "rgba(255, 255, 100, 1)";
+          }
+          context.fill();
+          context.restore();
+        }
+      }
+
+      function onMouseMove( e ){
+          //
+          context.save();
+          context.setTransform(1, 0, 0, 1, 0, 0);
+          context.clearRect(0, 0, 400, 400 );
+          context.restore();
+          if( isPress ){
+            var px = e.screenX - basePoint.x;
+            var py = e.screenY - basePoint.y;
+            context.translate(px, py);
+          }
+          hitTestItem(e);
+          updateBasePoint(e);
+      }
+
+      function onMouseUp( e ){
+        console.log("mouse=up");
+        isPress = false;
+        hitTestItem(e);
+      }
+
+    </script>
+  </body>
+</html>

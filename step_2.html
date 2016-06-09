@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>canvas-drag-test</title>
+    <style>
+      #screen{
+        background: black;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="screen" width="400" height="400" />
+    <script>
+
+      /**
+         drag & drop 구현
+         step_2
+          canvas 내부의 graphic요소 마우스 반응 처리
+            - 구현 순서
+              1. 기본fillStyle 정의
+              2. isPress 체크 처리
+              3. context에 객체 그리기
+              4. canvas의 isPointInPath를 이용 hitTest감지
+              5. isPointInPath가 true이면 fillStyle변경
+              6. fill처리
+
+         step_1
+          canvas translate를 이용한 드래그 구현 무리 없이 잘 구현됨.
+            - 그려진 객체 정보를 기억하여 다시 그려주는게 포인트.
+      */
+
+      var screen  = document.getElementById("screen");
+      var context = screen.getContext("2d");
+
+      var myRect = {x:100, y:100, w:20, h:20};
+
+      context.fillStyle = "rgba(255, 255, 100, 1)";
+      context.beginPath();
+      context.fillRect( myRect.x , myRect.y, myRect.w, myRect.h );
+
+
+      screen.addEventListener("mousedown", onMouseDown );
+      screen.addEventListener("mousemove", onMouseMove );
+      screen.addEventListener("mouseup", onMouseUp );
+
+      var isPress = false;
+      var basePoint = {x:0,y:0};
+      function onMouseDown( e ){
+        isPress = true;
+        updateBasePoint(e);
+      }
+
+      function updateBasePoint( e ){
+        basePoint.x = e.screenX;
+        basePoint.y = e.screenY;
+      }
+
+      function onMouseMove( e ){
+          //
+          context.clearRect(0, 0, 400, 400 );
+          context.fillStyle = "rgba(255, 255, 100, 1)";
+          context.beginPath();
+          if( isPress ){
+            var px = e.screenX - basePoint.x;
+            var py = e.screenY - basePoint.y;
+            context.translate(px, py);
+            updateBasePoint(e);
+          }
+
+          context.rect( myRect.x , myRect.y, myRect.w, myRect.h );
+          var area = screen.getBoundingClientRect();
+          var x = e.clientX - area.left;
+          var y = e.clientY - area.top;
+          if(context.isPointInPath( x, y )){
+            context.fillStyle = "red";
+          }
+          context.fill();
+
+      }
+
+      function onMouseUp( e ){
+        isPress = false;
+      }
+
+    </script>
+  </body>
+</html>

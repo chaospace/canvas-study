@@ -32,6 +32,18 @@
   results = (imageData.data[3] > 0) ? true : false;
   ```
 
+## draw시 setTransform이용하기
+  setTransform을 이용하면 drawing시 효율을 증가 시킬 수 있음  
+  다른 context상에 정보를 옮긴 때 등등...
+```{.javascript}
+  ctx.setTransform( 1, 0, 0, 1, 20, 21); // 미리 x, y 위치를 조절
+  ctx.beginPath();
+  ctx.fillStyle="#ffcc00";
+  ctx.rect( 20, 20, 30, 30 );            // 20, 20 위치에 그리면 setTransform의 영향에 의해 결과적으로 0, -1의 위치에 그려짐
+  ctx.fill();
+  ctx.closePath();
+```
+
 ## Canvas를 사용하며 느낀점
 다양한 드로잉 오브젝트를 다루기 위해서는 객체 관리가 필수.  
 객체에서는 내부 canvas를 가지고 original정보를 가지고 있는게 퍼포먼스에 좋음.
