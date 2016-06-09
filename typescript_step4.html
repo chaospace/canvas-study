@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>typescript-step1</title>
+  <style>
+    canvas{
+      position: absolute;
+      display: inline-block;
+      background-color: black;
+    }
+    #screen{
+      background-color: black;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="screen" width="300" height="300"></canvas>
+  <script src="./js/ts/RenderItem.js"></script>
+  <script src="./js/ts/Container.js"></script>
+  <script>
+    /**
+      typescript기초
+        step4
+          컨테이너 객체를 만들어 적용
+          뎁스가 잘 정리되어 있어서 클릭시 반응을 이쁘게 잘됨.
+
+        step3
+          겹쳐진 영역을 깔끔하게 가져오려면 뎁스 관리가 되어야 할듯.
+            조건은 2가지
+              컨테이너가 포함된 아이템이면 배열에 담아 그중에서 최상위 아이템을 찾아야 한다.
+              단일 아이템만 있다면 가장 먼저 힛트된 아이템에서 처리를 멈춘다.( 이는 배열에 순서대로 아이템이 존재한다는 가정하에 성립 )
+
+        step2 RenderItem 객체를 이용한 hitTest
+          이전에 만든 orinal과 hittest 위한 좌표를 translate를 이용해 조합
+
+        step1 RenderItem 기본 객체 작성
+    */
+    var screen = document.getElementById("screen");
+
+
+    var ctx = screen.getContext("2d");
+
+    var container = new Container();
+    var items = createRenderItems();
+
+    function createRenderItems(){
+      return [new RenderItem({name:"chaospace", x:100, y:100, radius:20, color:"#ffcc00"} ),
+              new RenderItem({name:"chaospace", x:120, y:140, radius:40, color:"#ffff00"} )];
+    }
+
+    for( var i=0;i<items.length;i++){
+      container.addChild(items[i]);
+    }
+
+
+    var pos = {x:80, y:90};
+    screen.addEventListener("mousemove", onMouseDownScreen );
+
+
+
+    var area = screen.getBoundingClientRect();
+    function onMouseDownScreen( e ){
+
+      pos = {x:e.clientX - area.left, y:e.clientY-area.top};
+
+      ctx.clearRect(0,0, screen.width, screen.height);
+      ctx.save();
+      ctx.fillStyle = "#ff0000";
+      ctx.beginPath();
+      ctx.arc( pos.x, pos.y, 2, 0, Math.PI*2);
+      ctx.fill();
+      ctx.closePath();
+
+      var hitItem = container.getRenderItemUnderPoint( pos.x, pos.y );
+      if( hitItem ){
+        hitItem.vo.color = "#ff0000";
+        hitItem._updateOrigin();
+      }
+
+      for( var i=0; i<items.length; i++){
+        var item = items[i];
+        if(item != hitItem ){
+          item.vo.color = "#ffcc00";
+          item._updateOrigin();
+        }
+        item.render(ctx);
+      }
+
+    }
+
+  </script>
+</body>
+</html>

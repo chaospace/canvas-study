@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>typescript-step1</title>
+</head>
+<body>
+  <canvas id="screen"></canvas>
+  <script src="./js/ts/RenderItem.js"></script>
+  <script>
+    /**
+      typescript기초
+        step1 RenderItem 기본 객체 작성
+    */
+    var screen = document.getElementById("screen");
+    var ctx = screen.getContext("2d");
+    var item =  new RenderItem( {name:"chaospace", x:100, y:100, radius:20, color:"#ffcc00"});
+    item.render(ctx);
+  </script>
+</body>
+</html>

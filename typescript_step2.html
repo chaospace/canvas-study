@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>typescript-step1</title>
+  <style>
+    #screen{
+      background-color: black;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="screen"></canvas>
+  <script src="./js/ts/RenderItem.js"></script>
+  <script>
+    /**
+      typescript기초
+        step2 RenderItem 객체를 이용한 hitTest
+          이전에 만든 orinal과 hittest 위한 좌표를 translate를 이용해 조합
+
+        step1 RenderItem 기본 객체 작성
+    */
+    var screen = document.getElementById("screen");
+    var ctx = screen.getContext("2d");
+    var item =  new RenderItem( {name:"chaospace", x:100, y:100, radius:20, color:"#ffcc00"});
+    item.render(ctx);
+    var pos = {x:80, y:90};
+
+
+    screen.addEventListener("mousemove", onMouseMove );
+
+    var area = screen.getBoundingClientRect();
+    function onMouseMove( e ){
+
+      pos = {x:e.clientX - area.left, y:e.clientY-area.top};
+      console.log("tweeen", pos );
+      ctx.clearRect(0,0, screen.width, screen.height);
+      ctx.fillStyle = "#ff0000";
+      ctx.beginPath();
+      ctx.arc( pos.x, pos.y, 2, 0, Math.PI*2);
+      ctx.fill();
+      ctx.closePath();
+      if(item.hitTest( pos.x, pos.y )){
+        item.vo.color = "#ff0000";
+      } else {
+        item.vo.color = "#ffcc00";
+      }
+      item.render(ctx);
+    }
+
+
+
+  </script>
+</body>
+</html>
